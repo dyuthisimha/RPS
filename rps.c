@@ -31,6 +31,20 @@ int decide_winner(int player, int computer) {
     return -1;
 }
 
+/*
+ * Generate an unbiased random move in range [0, 2] using rejection sampling.
+ */
+int random_move(void) {
+    int limit = RAND_MAX - (RAND_MAX % 3);
+    int value;
+
+    do {
+        value = rand();
+    } while (value >= limit);
+
+    return value % 3;
+}
+
 int main(void) {
     int player_move;
     int computer_move;
@@ -55,7 +69,7 @@ int main(void) {
     }
 
     /* Computer picks a random move from 0 to 2. */
-    computer_move = rand() % 3;
+    computer_move = random_move();
 
     printf("\nYou chose: %s\n", move_name(player_move));
     printf("Computer chose: %s\n", move_name(computer_move));
