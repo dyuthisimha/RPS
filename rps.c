@@ -1,5 +1,7 @@
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h> 
 #include <time.h>
 
 /*
@@ -43,6 +45,7 @@ int random_move(void)
 
 int main(void) 
 {
+    char choice[20];
     int player_move;
     int computer_move;
     int result;
@@ -51,22 +54,30 @@ int main(void)
     srand((unsigned int)time(NULL));
 
     printf("Rock Paper Scissors (single round)\n");
-    printf("Choose your move:\n");
-    printf("0 - Rock\n1 - Paper\n2 - Scissors\n");
+    printf("Type Rock(r), Paper(p), or Scissors(s)\n");
     printf("Enter choice: ");
 
-    if (scanf("%d", &player_move) != 1) 
+    if (scanf("%19s", choice) != 1)
     {
-        printf("Invalid input. Please enter 0, 1, or 2.\n");
+        printf("Invalid input.\n");
         return 1;
     }
 
-    // Clear remaining characters in the buffer until a newline or EOF
-    while ((c = getchar()) != '\n' && c != EOF);
+    for (int i = 0; choice[i] != '\0'; i++)
+        choice[i] = tolower((unsigned char)choice[i]);
 
-    if (player_move < 0 || player_move > 2) 
+    if (strcmp(choice, "rock") == 0 || strcmp(choice, "r") == 0)
+        player_move = 0;
+
+    else if (strcmp(choice, "paper") == 0 || strcmp(choice, "p") == 0)
+        player_move = 1;
+
+    else if (strcmp(choice, "scissors") == 0 || strcmp(choice, "s") == 0)
+        player_move = 2;
+
+    else
     {
-        printf("Choice out of range. Please enter 0, 1, or 2.\n");
+        printf("Invalid choice. Type Rock, Paper, or Scissors.\n");
         return 1;
     }
 
