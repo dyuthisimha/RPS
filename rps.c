@@ -4,31 +4,36 @@
 #include <string.h>
 #include <time.h>
 
-// Convert numeric move values to readable text: 0 -> Rock, 1 -> Paper, 2 -> Scissors
+// Convert numeric move values to readable text
 const char *move_name(int move)
 {
     if (move == 0) return "Rock";
     if (move == 1) return "Paper";
     if (move == 2) return "Scissors";
-    return "Unknown Move";
+
+    return "Unknown";
 }
 
-// Decide winner: 0  = draw; 1  = player wins; -1  = computer wins
+// Decide winner: 0 = draw; 1 = player wins; -1 = computer wins
 int decide_winner(int player, int computer)
 {
-    if (player == computer) return 0;
-    if ((player - computer + 3) % 3 == 1) return 1;
+    if (player == computer)
+        return 0;
+
+    if ((player - computer + 3) % 3 == 1)
+        return 1;
+
     return -1;
 }
 
-//Generate unbiased random move
+// Generate unbiased random move
 int random_move(void)
 {
     int limit = RAND_MAX - (RAND_MAX % 3);
     int value;
 
-    do {
-        value = rand();
+    do  {
+    value = rand();
     } while (value >= limit);
 
     return value % 3;
@@ -37,7 +42,6 @@ int random_move(void)
 int main(void)
 {
     char choice[20];
-    char play_again = 'y';
 
     int player_move;
     int computer_move;
@@ -46,15 +50,33 @@ int main(void)
     int player_score = 0;
     int computer_score = 0;
     int draws = 0;
+    int rounds;
 
     srand((unsigned int)time(NULL));
 
-    printf("=== Rock Paper Scissors ===\n");
+    printf("=====================================\n");
+    printf("        ROCK PAPER SCISSORS\n");
+    printf("=====================================\n");
 
-    while (play_again == 'y')
+    // Ask number of rounds
+    printf("Enter number of rounds: ");
+
+    if (scanf("%d", &rounds) != 1 || rounds <= 0)
     {
-        printf("\nType Rock(r), Paper(p), or Scissors(s)\n");
-        printf("Enter choice: ");
+        printf("Invalid number of rounds.\n");
+        return 1;
+    }
+
+    // Play fixed number of rounds
+    for (int round = 1; round <= rounds; round++)
+    {
+        printf("\n---------- Round %d ----------\n", round);
+
+        printf("\nChoose your move:\n");
+        printf("Rock (r)\n");
+        printf("Paper (p)\n");
+        printf("Scissors (s)\n");
+        printf("\nEnter choice: ");
 
         if (scanf("%19s", choice) != 1)
         {
@@ -78,52 +100,62 @@ int main(void)
 
         else
         {
-            printf("Invalid choice.\n");
+            printf("Invalid choice. Try again.\n");
+            round--; // repeat same round
             continue;
         }
 
         computer_move = random_move();
 
-        printf("\nYou chose: %s\n", move_name(player_move));
-        printf("Computer chose: %s\n", move_name(computer_move));
+        // Print moves
+        printf("\n--------------------------------------\n");
+        printf("You chose: %s\n",
+               move_name(player_move));
+        printf("Computer chose: %s\n",
+               move_name(computer_move));
+        printf("--------------------------------------\n");
 
+        // Decide winner
         result = decide_winner(player_move, computer_move);
 
         if (result == 0)
         {
-            printf("Result: It's a draw!\n");
+            printf("\nResult: It's a draw!\n");
             draws++;
         }
         else if (result == 1)
         {
-            printf("Result: You win!\n");
+            printf("\nResult: You win!\n");
             player_score++;
         }
         else
         {
-            printf("Result: Computer wins!\n");
+            printf("\nResult: Computer wins!\n");
             computer_score++;
         }
 
-        // Print scores
-        printf("\n--- Scoreboard ---\n");
-        printf("You: %d\n", player_score);
-        printf("Computer: %d\n", computer_score);
-        printf("Draws: %d\n", draws);
-
-        // Ask to play again
-        printf("\nPlay again? (y/n): ");
-        scanf(" %c", &play_again);
-
-        play_again = tolower((unsigned char)play_again);
+        // Scoreboard
+        printf("\n========== SCOREBOARD ==========\n");
+        printf("You      : %d\n", player_score);
+        printf("Computer : %d\n", computer_score);
+        printf("Draws    : %d\n", draws);
     }
 
-    printf("\n=== Final Scores ===\n");
+    // Final scores
+    printf("\n========== Final Scores ==========\n");
+
     printf("You: %d\n", player_score);
     printf("Computer: %d\n", computer_score);
     printf("Draws: %d\n", draws);
 
-    printf("\nThanks for playing!\n");
+    // Overall winner
+    if (player_score > computer_score)
+        printf("\nOverall Winner: You!\n");
+    else if (computer_score > player_score)
+        printf("\nOverall Winner: Computer!\n");
+    else
+        printf("\nOverall Result: It's a Tie!\n");
 
+    printf("\nThanks for playing!\n");
     return 0;
 }
